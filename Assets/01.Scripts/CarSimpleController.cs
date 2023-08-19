@@ -16,7 +16,8 @@ public class CarSimpleController : MonoBehaviour
     Rigidbody rb;
     public bool useAntiroll;
     public Transform shipMesh;
-    public float maxShipAngle, maxShipBounce;
+    public float maxShipAngle, maxShipBounce, shipBounceSpeed;
+    public float initialShipYpos;
     public TMPro.TextMeshProUGUI speedLabel;
 
     Vector3 resetPosition;
@@ -27,6 +28,7 @@ public class CarSimpleController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         resetPosition = transform.position;
         resetQuaternion = transform.rotation;
+        initialShipYpos = shipMesh ? shipMesh.transform.localPosition.y : 0;
     }
 
     public void resetPlayer()
@@ -50,7 +52,7 @@ public class CarSimpleController : MonoBehaviour
         if(shipMesh)
         {
             shipMesh.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(-maxShipAngle, maxShipAngle, (handling + 1) / 2f));
-            shipMesh.transform.localPosition = new Vector3(0, Mathf.Lerp(-maxShipBounce, maxShipBounce,Mathf.PingPong( Time.time,1f)), 0);
+            shipMesh.transform.localPosition = new Vector3(0, Mathf.Lerp(initialShipYpos-maxShipBounce, initialShipYpos+ maxShipBounce,Mathf.PingPong( Time.time* shipBounceSpeed, 1f)), 0);
         }
         if (rb && speedLabel)
             speedLabel.text ="Speed :"+ rb.velocity.magnitude.ToString();
