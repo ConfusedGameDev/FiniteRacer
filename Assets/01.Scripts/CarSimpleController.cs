@@ -22,6 +22,7 @@ public class CarSimpleController : MonoBehaviour
 
     Vector3 resetPosition;
     Quaternion resetQuaternion;
+    public bool useUserInput;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,8 +48,11 @@ public class CarSimpleController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        gas = Input.GetAxis("Vertical");
-        handling= Input.GetAxis("Horizontal");
+        if (useUserInput)
+        {
+            gas = Input.GetAxis("Vertical");
+            handling = Input.GetAxis("Horizontal");
+        }
         if(shipMesh)
         {
             shipMesh.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(-maxShipAngle, maxShipAngle, (handling + 1) / 2f));
@@ -60,10 +64,10 @@ public class CarSimpleController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             resetPlayer();
     }
-
+    public ForceMode fm;
     private void FixedUpdate()
     {
-        foreach (var wheel in wheels)
+        /*foreach (var wheel in wheels)
         {
             if(wheel.wCollider && wheel.useMotor)
             {
@@ -75,8 +79,10 @@ public class CarSimpleController : MonoBehaviour
             }
         }
         if (useAntiroll)
-            calculateAntiRoll();
+            calculateAntiRoll();*/
+        rb.AddForce(transform.forward * gas * maxTorque + transform.right * handling*maxTorque, fm);
     }
+    
     public void addForce(float force)
     {
         if (rb)
